@@ -1,60 +1,89 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
     try {
-      // In a real app, you would make an API call here
-      await login({ name: 'Test User', email: formData.email });
-      navigate('/');
+      const { success, error } = await login(formData);
+      if (success) {
+        navigate('/therapists');
+      } else {
+        setError(error);
+      }
     } catch (err) {
-      setError('Invalid email or password');
+      setError('Failed to log in');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-md w-full space-y-8"
-        >
+    <div className="flex h-screen">
+      {/* Left side - Image */}
+      <div className="hidden lg:flex lg:w-1/2 relative">
+        <img
+          src="https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+          alt="Wellness"
+          className="object-cover w-full"
+        />
+        {/* Overlay text */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-primary-900/40 flex flex-col justify-end p-12">
+          <h2 className="text-white text-3xl font-bold mb-4">Welcome Back to Your Journey</h2>
+          <p className="text-white text-xl opacity-90">
+            "Every day is a new opportunity to invest in your mental well-being. Your commitment to self-care starts here."
+          </p>
+        </div>
+      </div>
+
+      {/* Right side - Form */}
+      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-20 xl:px-24">
+        <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-gray-600">
-              Continue your mental wellness journey
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              Sign in
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Continue your journey
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="mt-8">
             {error && (
-              <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+              <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
-            <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
@@ -66,8 +95,7 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="input mt-1"
-                  placeholder="Enter your email"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
 
@@ -82,73 +110,30 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="input mt-1"
-                  placeholder="Enter your password"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
+              <div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                  {isLoading ? 'Logging in...' : 'Log in'}
+                </button>
               </div>
+            </form>
 
-              <div className="text-sm">
-                <a href="#" className="text-primary-600 hover:text-primary-500">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="btn-primary w-full"
-            >
-              Sign In
-            </button>
-
-            <p className="text-center text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-primary-600 hover:text-primary-500">
+            <div className="mt-6 text-center text-sm">
+              <span className="text-gray-600">Don't have an account?</span>{' '}
+              <Link to="/signup" className="font-medium text-primary-600 hover:text-primary-500">
                 Sign up
               </Link>
-            </p>
-          </form>
-        </motion.div>
-      </div>
-
-      {/* Right Side - Image */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-        className="hidden lg:block flex-1 bg-primary-50"
-      >
-        <div className="h-full w-full bg-cover bg-center" style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1545987796-200677ee1011?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
-          backgroundBlendMode: 'overlay',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)'
-        }}>
-          <div className="h-full flex items-center justify-center p-12">
-            <div className="max-w-xl text-center">
-              <h3 className="text-3xl font-bold text-primary-900 mb-4">
-                Your Mental Health Journey Matters
-              </h3>
-              <p className="text-lg text-gray-700">
-                Connect with professional therapists who can help you navigate life's challenges and grow stronger.
-              </p>
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

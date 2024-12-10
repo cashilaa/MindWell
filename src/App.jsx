@@ -8,6 +8,8 @@ import SignUp from './pages/SignUp';
 import Quiz from './pages/Quiz';
 import TherapistDirectory from './pages/TherapistDirectory';
 import Appointments from './pages/Appointments';
+import Resources from './pages/Resources';
+import ResourceDetail from './pages/ResourceDetail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -26,12 +28,14 @@ function App() {
       <Router>
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Navbar />
-          <main className="flex-grow">
+          <main className="flex-grow pt-16">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/quiz" element={<Quiz />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/resources/:topic" element={<ResourceDetail />} />
               
               {/* Protected Routes */}
               <Route
@@ -56,7 +60,7 @@ function App() {
         </div>
       </Router>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

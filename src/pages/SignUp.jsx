@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 
 const SignUp = () => {
+  const { user, signup } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -11,8 +13,14 @@ const SignUp = () => {
     name: '',
   });
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const { signup } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,17 +39,45 @@ const SignUp = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
-      await signup(formData.email, formData.password);
-      navigate('/therapists');
+      const { success, error } = await signup({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (success) {
+        navigate('/therapists');
+      } else {
+        setError(error);
+      }
     } catch (err) {
       setError('Failed to create an account');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side - Form */}
+    <div className="flex h-screen">
+      {/* Left side - Image */}
+      <div className="hidden lg:flex lg:w-1/2 relative">
+        <img
+          src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+          alt="Personal Growth"
+          className="object-cover w-full"
+        />
+        {/* Overlay text */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-primary-900/40 flex flex-col justify-end p-12">
+          <h2 className="text-white text-3xl font-bold mb-4">Begin Your Wellness Journey</h2>
+          <p className="text-white text-xl opacity-90">
+            "Taking the first step towards mental well-being is an act of courage. We're here to support you every step of the way."
+          </p>
+        </div>
+      </div>
+
+      {/* Right side - Form */}
       <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="text-center">
@@ -124,9 +160,10 @@ const SignUp = () => {
               <div>
                 <button
                   type="submit"
+                  disabled={isLoading}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
-                  Sign Up
+                  {isLoading ? 'Creating Account...' : 'Sign Up'}
                 </button>
               </div>
             </form>
@@ -139,15 +176,6 @@ const SignUp = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Right side - Image */}
-      <div className="hidden lg:block relative flex-1">
-        <img
-          className="absolute inset-0 h-full w-full object-cover"
-          src="https://images.unsplash.com/photo-1454486837617-ce8e1ba5ebfe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1173&q=80"
-          alt="People supporting each other"
-        />
       </div>
     </div>
   );

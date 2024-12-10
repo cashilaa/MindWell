@@ -12,6 +12,7 @@ const mockTherapists = [
     languages: ['English', 'Spanish'],
     sessionTypes: ['Online', 'In-person'],
     price: '$120-150',
+    priceRange: '100-150',
     rating: 4.9,
     availability: 'Next week',
   },
@@ -23,10 +24,34 @@ const mockTherapists = [
     languages: ['English', 'Mandarin'],
     sessionTypes: ['Online'],
     price: '$100-130',
+    priceRange: '100-150',
     rating: 4.8,
     availability: 'This week',
   },
-  // Add more therapists as needed
+  {
+    id: 3,
+    name: 'Dr. Emma Rodriguez',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1888&q=80',
+    specialties: ['Depression', 'Family Therapy', 'LGBTQ+'],
+    languages: ['English', 'Spanish'],
+    sessionTypes: ['Online', 'In-person'],
+    price: '$90-120',
+    priceRange: '0-100',
+    rating: 4.7,
+    availability: 'This week',
+  },
+  {
+    id: 4,
+    name: 'Dr. James Wilson',
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
+    specialties: ['Trauma', 'PTSD', 'Anxiety'],
+    languages: ['English'],
+    sessionTypes: ['In-person'],
+    price: '$150-180',
+    priceRange: '150+',
+    rating: 4.9,
+    availability: 'Next week',
+  },
 ];
 
 const TherapistDirectory = () => {
@@ -37,20 +62,95 @@ const TherapistDirectory = () => {
     priceRange: '',
   });
   const [therapists, setTherapists] = useState(mockTherapists);
+  const [filteredTherapists, setFilteredTherapists] = useState(mockTherapists);
+  const [matchedTherapists, setMatchedTherapists] = useState(null);
   const location = useLocation();
 
+  // Apply filters whenever filters change
   useEffect(() => {
-    // In a real app, you would use the quiz answers to filter therapists
-    const quizAnswers = location.state?.quizAnswers;
-    if (quizAnswers) {
-      // Apply filtering based on quiz answers
-      console.log('Quiz answers:', quizAnswers);
+    let filtered = matchedTherapists || mockTherapists;
+
+    // Apply specialty filter
+    if (filters.specialty) {
+      filtered = filtered.filter(therapist =>
+        therapist.specialties.some(s => s.toLowerCase() === filters.specialty.toLowerCase())
+      );
+    }
+
+    // Apply session type filter
+    if (filters.sessionType) {
+      filtered = filtered.filter(therapist =>
+        therapist.sessionTypes.some(t => t.toLowerCase() === filters.sessionType.toLowerCase())
+      );
+    }
+
+    // Apply language filter
+    if (filters.language) {
+      filtered = filtered.filter(therapist =>
+        therapist.languages.some(l => l.toLowerCase() === filters.language.toLowerCase())
+      );
+    }
+
+    // Apply price range filter
+    if (filters.priceRange) {
+      filtered = filtered.filter(therapist => therapist.priceRange === filters.priceRange);
+    }
+
+    setFilteredTherapists(filtered);
+  }, [filters, matchedTherapists]);
+
+  // Apply quiz-based filtering when available
+  useEffect(() => {
+    const matchResults = location.state?.matchResults;
+    if (matchResults) {
+      // Calculate match scores for each therapist
+      const scoredTherapists = mockTherapists.map(therapist => {
+        let matchScore = 0;
+        let primaryMatchCount = 0;
+
+        // Check primary concerns match (highest priority)
+        matchResults.primaryConcerns.forEach(concern => {
+          if (therapist.specialties.some(s => s.toLowerCase().includes(concern.toLowerCase()))) {
+            matchScore += 10; // Higher score for primary concerns
+            primaryMatchCount++;
+          }
+        });
+
+        // Check other specialties match
+        matchResults.specialties.forEach(specialty => {
+          if (therapist.specialties.some(s => s.toLowerCase().includes(specialty.toLowerCase()))) {
+            matchScore += 5;
+          }
+        });
+
+        // Bonus points for matching multiple primary concerns
+        if (primaryMatchCount > 1) {
+          matchScore += 10;
+        }
+
+        return {
+          ...therapist,
+          matchScore,
+          primaryMatchCount,
+        };
+      });
+
+      // Sort therapists by match score and primary match count
+      const matched = scoredTherapists
+        .sort((a, b) => {
+          if (b.primaryMatchCount !== a.primaryMatchCount) {
+            return b.primaryMatchCount - a.primaryMatchCount;
+          }
+          return b.matchScore - a.matchScore;
+        });
+
+      setMatchedTherapists(matched);
+      setFilteredTherapists(matched);
     }
   }, [location]);
 
   const handleFilterChange = (filterType, value) => {
-    setFilters({ ...filters, [filterType]: value });
-    // In a real app, you would apply the filters here
+    setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
   const TherapistCard = ({ therapist }) => (
@@ -69,7 +169,14 @@ const TherapistDirectory = () => {
         </div>
         <div className="p-8">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold text-gray-900">{therapist.name}</h3>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">{therapist.name}</h3>
+              {therapist.matchScore && (
+                <span className="text-sm text-primary-600">
+                  Match Score: {Math.min(100, Math.round(therapist.matchScore * 5))}%
+                </span>
+              )}
+            </div>
             <span className="bg-primary-100 text-primary-800 text-sm px-3 py-1 rounded-full">
               {therapist.rating} ★
             </span>
@@ -182,7 +289,7 @@ const TherapistDirectory = () => {
 
         {/* Results */}
         <div className="space-y-6">
-          {therapists.map((therapist) => (
+          {filteredTherapists.map((therapist) => (
             <TherapistCard key={therapist.id} therapist={therapist} />
           ))}
         </div>
