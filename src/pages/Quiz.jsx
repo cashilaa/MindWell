@@ -142,10 +142,15 @@ const Quiz = () => {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="mb-6">
-        <Progress value={progress} color="blue" className="h-1" />
+        <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-[#BE8B69] transition-all duration-300 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
         <div className="flex justify-between mt-2">
           <span className="text-sm text-gray-600">Question {currentQuestion + 1} of {quizQuestions.length}</span>
-          <span className="text-sm text-primary-600"> Streak: {streak}</span>
+          <span className="text-sm text-[#BE8B69]">Streak: {streak}</span>
         </div>
       </div>
 

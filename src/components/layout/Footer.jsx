@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-primary-600">
               <div className="flex items-center">
-                <img src={logo} alt="MindWell Logo" className="h-10 w-auto" />
+                <img src={logo} alt="Logo" className="h-[50px] w-auto" />
               </div>
             </h3>
             <p className="text-gray-600">

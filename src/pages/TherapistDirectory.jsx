@@ -153,145 +153,142 @@ const TherapistDirectory = () => {
     setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
-  const TherapistCard = ({ therapist }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl shadow-md overflow-hidden h-full"
-    >
-      <div className="flex flex-col h-full">
-        <div className="relative h-48">
-          <img
-            className="w-full h-full object-cover"
-            src={therapist.image}
-            alt={therapist.name}
-          />
-        </div>
-        <div className="p-6 flex-grow">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900">{therapist.name}</h3>
-              {therapist.matchScore && (
-                <span className="text-sm text-primary-600">
-                  Match Score: {Math.min(100, Math.round(therapist.matchScore * 5))}%
-                </span>
-              )}
+  return (
+    <div className="min-h-screen bg-gray-50 py-4">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Filters Section */}
+          <div className="w-full md:w-1/4 lg:w-1/5">
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+              <h2 className="text-xl font-semibold mb-6 text-gray-800">Filters</h2>
+              <div className="flex flex-col gap-5">
+                <div className="filter-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Specialty
+                  </label>
+                  <select
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#BE8B69] focus:ring focus:ring-[#BE8B69] focus:ring-opacity-50"
+                    value={filters.specialty}
+                    onChange={(e) => handleFilterChange('specialty', e.target.value)}
+                  >
+                    <option value="">All Specialties</option>
+                    <option value="anxiety">Anxiety</option>
+                    <option value="depression">Depression</option>
+                    <option value="relationships">Relationships</option>
+                    <option value="trauma">Trauma</option>
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Session Type
+                  </label>
+                  <select
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#BE8B69] focus:ring focus:ring-[#BE8B69] focus:ring-opacity-50"
+                    value={filters.sessionType}
+                    onChange={(e) => handleFilterChange('sessionType', e.target.value)}
+                  >
+                    <option value="">All Types</option>
+                    <option value="online">Online</option>
+                    <option value="in-person">In-Person</option>
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Language
+                  </label>
+                  <select
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#BE8B69] focus:ring focus:ring-[#BE8B69] focus:ring-opacity-50"
+                    value={filters.language}
+                    onChange={(e) => handleFilterChange('language', e.target.value)}
+                  >
+                    <option value="">All Languages</option>
+                    <option value="english">English</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="mandarin">Mandarin</option>
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Price Range
+                  </label>
+                  <select
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#BE8B69] focus:ring focus:ring-[#BE8B69] focus:ring-opacity-50"
+                    value={filters.priceRange}
+                    onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                  >
+                    <option value="">All Prices</option>
+                    <option value="0-100">$0-100</option>
+                    <option value="100-150">$100-150</option>
+                    <option value="150+">$150+</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <span className="bg-primary-100 text-primary-800 text-sm px-3 py-1 rounded-full">
-              {therapist.rating} ★
-            </span>
           </div>
-          
-          <div>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {therapist.specialties.map((specialty, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full"
+
+          {/* Therapist Cards Section */}
+          <div className="w-full md:w-3/4 lg:w-4/5">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredTherapists.map((therapist) => (
+                <motion.div
+                  key={therapist.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col"
                 >
-                  {specialty}
-                </span>
+                  <div className="relative h-40 md:h-56 lg:h-64">
+                    <img
+                      src={therapist.image}
+                      alt={therapist.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4 md:p-6 flex flex-col flex-grow">
+                    <h3 className="text-lg md:text-xl font-semibold mb-2">{therapist.name}</h3>
+                    <div className="text-sm md:text-base text-gray-600 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {therapist.specialties.map((specialty, index) => (
+                          <span
+                            key={index}
+                            className="bg-[#BE8B69] bg-opacity-10 text-[#BE8B69] px-2 py-1 rounded-full text-sm"
+                          >
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="space-y-2">
+                        <p className="flex items-center gap-2">
+                          <span className="font-medium">Languages:</span> 
+                          {therapist.languages.join(', ')}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="font-medium">Sessions:</span> 
+                          {therapist.sessionTypes.join(', ')}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="font-medium">Price:</span> 
+                          {therapist.price}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="font-medium">Available:</span> 
+                          {therapist.availability}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-auto">
+                      <button className="w-full bg-[#BE8B69] text-white py-2.5 rounded-md text-base font-medium hover:bg-[#977669] transition-colors">
+                        Book Consultation
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
-            
-            <div className="space-y-2 text-gray-600">
-              <p>Languages: {therapist.languages.join(', ')}</p>
-              <p>Session Types: {therapist.sessionTypes.join(', ')}</p>
-              <p>Price Range: {therapist.price}</p>
-              <p className="text-primary-600">Next Available: {therapist.availability}</p>
-            </div>
-
-            <div className="mt-6 flex space-x-4">
-              <button className="btn-primary">
-                Book Session
-              </button>
-              <button className="btn-secondary">
-                View Profile
-              </button>
-            </div>
           </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Specialty
-              </label>
-              <select
-                className="input"
-                value={filters.specialty}
-                onChange={(e) => handleFilterChange('specialty', e.target.value)}
-              >
-                <option value="">All Specialties</option>
-                <option value="anxiety">Anxiety</option>
-                <option value="depression">Depression</option>
-                <option value="relationships">Relationships</option>
-                <option value="trauma">Trauma</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Session Type
-              </label>
-              <select
-                className="input"
-                value={filters.sessionType}
-                onChange={(e) => handleFilterChange('sessionType', e.target.value)}
-              >
-                <option value="">All Types</option>
-                <option value="online">Online</option>
-                <option value="in-person">In-Person</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Language
-              </label>
-              <select
-                className="input"
-                value={filters.language}
-                onChange={(e) => handleFilterChange('language', e.target.value)}
-              >
-                <option value="">All Languages</option>
-                <option value="english">English</option>
-                <option value="spanish">Spanish</option>
-                <option value="mandarin">Mandarin</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price Range
-              </label>
-              <select
-                className="input"
-                value={filters.priceRange}
-                onChange={(e) => handleFilterChange('priceRange', e.target.value)}
-              >
-                <option value="">All Prices</option>
-                <option value="0-100">$0-100</option>
-                <option value="100-150">$100-150</option>
-                <option value="150+">$150+</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Results */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredTherapists.map((therapist) => (
-            <TherapistCard key={therapist.id} therapist={therapist} />
-          ))}
         </div>
       </div>
     </div>

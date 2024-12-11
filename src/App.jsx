@@ -58,9 +58,11 @@ function App() {
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/resources/:topic" element={<ResourceDetail />} />
+                <Route path="/therapists" element={<TherapistDirectory />} />
+                <Route path="/appointments" element={<Appointments />} />
                 
                 {/* Protected Routes */}
-                <Route
+                {/* <Route
                   path="/therapists"
                   element={
                     <ProtectedRoute>
@@ -75,7 +77,7 @@ function App() {
                       <Appointments />
                     </ProtectedRoute>
                   }
-                />
+                /> */}
               </Routes>
             </main>
             <Footer />

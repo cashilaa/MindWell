@@ -56,7 +56,13 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <img src={logo} alt="MindWell Logo" className="h-10 w-auto absolute" style={{ top: '11px', left: '27px', opacity: 1 }} />
+              <Link to="/" className="flex items-center">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="h-[50px] w-auto"
+                />
+              </Link>
             </div>
 
             {/* Desktop Navigation */}

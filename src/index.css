@@ -15,11 +15,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  @apply text-[#BE8B69] hover:text-[#977669];
 }
+
 a:hover {
-  color: #535bf2;
+  @apply text-[#977669];
 }
 
 body {
@@ -47,11 +47,11 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #977669;
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  @apply outline-none ring-2 ring-[#BE8B69] ring-offset-2;
 }
 
 @media (prefers-color-scheme: light) {
@@ -60,7 +60,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    @apply text-[#977669];
   }
   button {
     background-color: #f9f9f9;
@@ -85,16 +85,16 @@ button:focus-visible {
     @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out;
   }
   .btn-primary {
-    @apply btn bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700;
+    @apply btn bg-[#BE8B69] text-white hover:bg-[#977669] hover:text-white active:bg-[#977669];
   }
   .btn-secondary {
-    @apply btn bg-secondary-100 text-secondary-900 hover:bg-secondary-200 active:bg-secondary-300;
+    @apply btn bg-[#D2BAB0] text-gray-900 hover:bg-[#E0CEC7] hover:text-gray-900 active:bg-[#E0CEC7];
   }
   .btn-accent {
-    @apply btn bg-accent-500 text-white hover:bg-accent-600 active:bg-accent-700;
+    @apply btn bg-[#BE8B69] text-white hover:bg-[#977669] active:bg-[#977669];
   }
   .input {
-    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#BE8B69] focus:border-transparent;
   }
   .card {
     @apply bg-white rounded-xl shadow-md p-6 transition-all duration-200 hover:shadow-lg;
@@ -102,4 +102,10 @@ button:focus-visible {
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  @apply outline-none ring-2 ring-[#BE8B69] ring-offset-0 border-[#BE8B69];
 }
