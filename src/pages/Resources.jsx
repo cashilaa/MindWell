@@ -25,13 +25,13 @@ const EducationalResource = ({ title, description, icon: Icon, topic }) => (
     className="bg-white rounded-lg shadow-md p-6"
   >
     <div className="flex items-center mb-4">
-      <Icon className="h-8 w-8 text-primary-600" />
+      <Icon className="h-8 w-8 text-[#BE8B69]" />
       <h3 className="text-xl font-semibold ml-3">{title}</h3>
     </div>
     <p className="text-gray-600 mb-4">{description}</p>
     <Link
       to={`/resources/${topic}`}
-      className="inline-flex items-center text-primary-600 hover:text-primary-700"
+      className="inline-flex items-center text-[#BE8B69] hover:text-[#BE8B69]"
     >
       Learn More
       <ArrowRightIcon className="h-5 w-5 ml-2" />
@@ -349,24 +349,15 @@ const Resources = () => {
             Educational Resources
           </Typography>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <EducationalResource
-              title="Understanding Anxiety"
-              description="Learn about anxiety symptoms and coping strategies"
-              icon={LightBulbIcon}
-              topic="anxiety"
-            />
-            <EducationalResource
-              title="Depression Awareness"
-              description="Understand depression and treatment options"
-              icon={HeartIcon}
-              topic="depression"
-            />
-            <EducationalResource
-              title="Stress Management"
-              description="Effective techniques for managing stress"
-              icon={SparklesIcon}
-              topic="stress-management"
-            />
+            {educationalResources.map((resource, index) => (
+              <EducationalResource
+                key={index}
+                title={resource.title}
+                description={resource.description}
+                icon={resource.icon}
+                topic={resource.topic}
+              />
+            ))}
           </div>
         </motion.div>
 
@@ -375,7 +366,7 @@ const Resources = () => {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-blue-600 text-white rounded-xl p-8 mb-16"
+          className="bg-[#BE8B69] text-white rounded-xl p-8 mb-16"
         >
           <div className="text-center max-w-2xl mx-auto">
             <Typography variant="h4" className="mb-4">

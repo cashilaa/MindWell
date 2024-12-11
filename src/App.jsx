@@ -10,6 +10,27 @@ import TherapistDirectory from './pages/TherapistDirectory';
 import Appointments from './pages/Appointments';
 import Resources from './pages/Resources';
 import ResourceDetail from './pages/ResourceDetail';
+import { ThemeProvider } from "@material-tailwind/react";
+
+const theme = {
+  button: {
+    defaultProps: {
+      color: "primary",
+      size: "md",
+      variant: "filled",
+    },
+    styles: {
+      variants: {
+        filled: {
+          primary: {
+            background: "#BE8B69",
+            color: "white",
+          },
+        },
+      },
+    },
+  },
+};
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -25,40 +46,42 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar />
-          <main className="flex-grow pt-16">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/quiz" element={<Quiz />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/resources/:topic" element={<ResourceDetail />} />
-              
-              {/* Protected Routes */}
-              <Route
-                path="/therapists"
-                element={
-                  <ProtectedRoute>
-                    <TherapistDirectory />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/appointments"
-                element={
-                  <ProtectedRoute>
-                    <Appointments />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <ThemeProvider value={theme}>
+        <Router>
+          <div className="min-h-screen flex flex-col bg-lightGray">
+            <Navbar />
+            <main className="flex-grow pt-16">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/resources/:topic" element={<ResourceDetail />} />
+                
+                {/* Protected Routes */}
+                <Route
+                  path="/therapists"
+                  element={
+                    <ProtectedRoute>
+                      <TherapistDirectory />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/appointments"
+                  element={
+                    <ProtectedRoute>
+                      <Appointments />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

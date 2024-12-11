@@ -23,7 +23,7 @@ export function WelcomeModal({ open, handleOpen }) {
     >
       <DialogHeader className="text-center justify-center">
         <Typography variant="h4" color="blue">
-          Welcome to MindWell
+          Welcome to Tryve
         </Typography>
       </DialogHeader>
       <DialogBody className="text-center">

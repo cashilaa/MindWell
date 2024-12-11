@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
 import { WelcomeModal } from '../WelcomeModal';
+import logo from '../../assets/logo.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const { user, logout } = useAuth();
+  const isAuthenticated = !!user;
+  const location = useLocation();
 
   useEffect(() => {
     // Show welcome modal when user logs in
@@ -19,14 +22,31 @@ const Navbar = () => {
 
   const publicLinks = [
     { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
   ];
 
   const privateLinks = [
-    { name: 'About', path: '/about' },
     { name: 'Resources', path: '/resources' },
     { name: 'Find Therapists', path: '/therapists' },
     { name: 'Appointments', path: '/appointments' },
   ];
+
+  const NavLink = ({ to, children }) => {
+    const isActive = location.pathname === to;
+  
+    return (
+      <Link
+        to={to}
+        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200
+          ${isActive 
+            ? 'text-[#BE8B69] bg-[#F7F7F7]' 
+            : 'text-gray-600 hover:text-[#BE8B69] hover:bg-[#D2BAB0]'
+          }`}
+      >
+        {children}
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -36,67 +56,53 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="text-2xl font-bold text-primary-600">
-                MindWell
-              </Link>
+              <img src={logo} alt="MindWell Logo" className="h-10 w-auto absolute" style={{ top: '11px', left: '27px', opacity: 1 }} />
             </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {publicLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-gray-600 hover:text-primary-600 transition-colors"
-                >
+                <NavLink key={link.name} to={link.path}>
                   {link.name}
-                </Link>
+                </NavLink>
               ))}
-
-              {user && (
+              {privateLinks.map((link) => (
+                <NavLink key={link.name} to={link.path}>
+                  {link.name}
+                </NavLink>
+              ))}
+              {isAuthenticated ? (
                 <>
-                  {privateLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      to={link.path}
-                      className="text-gray-600 hover:text-primary-600 transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
-                </>
-              )}
-
-              {/* Auth Buttons */}
-              <div className="flex items-center space-x-4">
-                {user ? (
+                  <NavLink to="/profile">
+                    Profile
+                  </NavLink>
                   <button
                     onClick={logout}
                     className="btn-secondary px-4 py-2"
                   >
                     Logout
                   </button>
-                ) : (
-                  <>
-                    <Link to="/login" className="text-gray-600 hover:text-primary-600">
-                      Login
-                    </Link>
-                    <Link
-                      to="/signup"
-                      className="btn-primary px-4 py-2"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
-              </div>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/signup">
+                    Signup
+                  </NavLink>
+                  <Link
+                    to="/login"
+                    className="btn-primary px-4 py-2"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-600 hover:text-primary-600 focus:outline-none"
+                className="text-gray-600 hover:text-[#BE8B69] focus:outline-none"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {isOpen ? (
@@ -118,56 +124,41 @@ const Navbar = () => {
               className="md:hidden py-4"
             >
               {publicLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="block py-2 text-gray-600 hover:text-primary-600"
-                  onClick={() => setIsOpen(false)}
-                >
+                <NavLink key={link.name} to={link.path} onClick={() => setIsOpen(false)}>
                   {link.name}
-                </Link>
+                </NavLink>
               ))}
-
-              {user && (
+              {privateLinks.map((link) => (
+                <NavLink key={link.name} to={link.path} onClick={() => setIsOpen(false)}>
+                  {link.name}
+                </NavLink>
+              ))}
+              {isAuthenticated ? (
                 <>
-                  {privateLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      to={link.path}
-                      className="block py-2 text-gray-600 hover:text-primary-600"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
+                  <NavLink to="/profile" onClick={() => setIsOpen(false)}>
+                    Profile
+                  </NavLink>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="block w-full text-left py-2 text-gray-600 hover:text-[#BE8B69]"
+                  >
+                    Logout
+                  </button>
                 </>
-              )}
-
-              {user ? (
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsOpen(false);
-                  }}
-                  className="block w-full text-left py-2 text-gray-600 hover:text-primary-600"
-                >
-                  Logout
-                </button>
               ) : (
                 <>
+                  <NavLink to="/signup" onClick={() => setIsOpen(false)}>
+                    Signup
+                  </NavLink>
                   <Link
                     to="/login"
-                    className="block py-2 text-gray-600 hover:text-primary-600"
+                    className="block py-2 text-gray-600 hover:text-[#BE8B69]"
                     onClick={() => setIsOpen(false)}
                   >
                     Login
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="block py-2 text-gray-600 hover:text-primary-600"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Sign Up
                   </Link>
                 </>
               )}

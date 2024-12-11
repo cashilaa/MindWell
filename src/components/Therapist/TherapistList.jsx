@@ -109,51 +109,48 @@ const TherapistList = () => {
 
           {/* Therapist Cards */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredTherapists.map((therapist) => (
                 <motion.div
                   key={therapist.id}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 ease-in-out hover:shadow-xl"
+                  className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 ease-in-out hover:shadow-xl h-full"
                   whileHover={{ y: -5 }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  <div className="flex flex-col sm:flex-row">
-                    <div className="sm:w-1/3 md:w-1/4">
+                  <div className="flex flex-col h-full">
+                    <div className="relative h-48">
                       <img
-                        className="h-48 sm:h-full w-full object-cover rounded-t-xl sm:rounded-t-none sm:rounded-l-xl"
+                        className="w-full h-full object-cover"
                         src={therapist.image}
                         alt={therapist.name}
                       />
+                      <div className="absolute top-2 right-2 bg-white/90 rounded-full px-2 py-1 flex items-center">
+                        <span className="text-yellow-400 mr-1">★</span>
+                        <span className="text-sm">{therapist.rating}</span>
+                      </div>
                     </div>
-                    <div className="flex-1 p-4 sm:p-6">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
-                        <div>
-                          <h3 className="text-xl font-bold text-primary-900">
-                            {therapist.name}
-                          </h3>
-                          <p className="text-gray-600">{therapist.title}</p>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="text-yellow-400">★</span>
-                          <span className="ml-1 text-gray-600">
-                            {therapist.rating} ({therapist.reviews} reviews)
-                          </span>
-                        </div>
+                    
+                    <div className="p-4 flex flex-col flex-grow">
+                      <div className="mb-3">
+                        <h3 className="text-lg font-bold text-primary-900 mb-1">
+                          {therapist.name}
+                        </h3>
+                        <p className="text-sm text-gray-600">{therapist.title}</p>
                       </div>
 
-                      <div className="mt-3 space-y-2">
+                      <div className="space-y-2 mb-3">
                         <div className="text-sm text-gray-600 flex items-center gap-2">
                           <span className="inline-block w-4">📍</span>
                           {therapist.location}
                         </div>
                         <div className="text-sm text-green-600 flex items-center gap-2">
                           <span className="inline-block w-4">⏰</span>
-                          Next available: {therapist.nextAvailable}
+                          Next: {therapist.nextAvailable}
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 my-4">
+                      <div className="flex flex-wrap gap-2 mb-4">
                         {therapist.specializations.slice(0, 2).map((spec) => (
                           <span
                             key={spec}
@@ -164,20 +161,20 @@ const TherapistList = () => {
                         ))}
                         {therapist.specializations.length > 2 && (
                           <span className="text-gray-600 text-xs">
-                            +{therapist.specializations.length - 2} more
+                            +{therapist.specializations.length - 2}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                      <div className="flex flex-col gap-2 mt-auto">
                         <button
                           onClick={() => navigate(`/therapist/${therapist.id}`)}
-                          className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-colors text-center"
+                          className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-colors text-center text-sm"
                         >
                           View Profile
                         </button>
                         <button
-                          className="flex-1 border border-primary-600 text-primary-600 py-2 px-4 rounded-lg hover:bg-primary-50 transition-colors text-center"
+                          className="w-full border border-primary-600 text-primary-600 py-2 px-4 rounded-lg hover:bg-primary-50 transition-colors text-center text-sm"
                         >
                           Quick Book
                         </button>

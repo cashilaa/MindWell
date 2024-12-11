@@ -157,18 +157,18 @@ const TherapistDirectory = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl shadow-md overflow-hidden"
+      className="bg-white rounded-xl shadow-md overflow-hidden h-full"
     >
-      <div className="md:flex">
-        <div className="md:flex-shrink-0">
+      <div className="flex flex-col h-full">
+        <div className="relative h-48">
           <img
-            className="h-48 w-full object-cover md:w-48"
+            className="w-full h-full object-cover"
             src={therapist.image}
             alt={therapist.name}
           />
         </div>
-        <div className="p-8">
-          <div className="flex items-center justify-between">
+        <div className="p-6 flex-grow">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xl font-semibold text-gray-900">{therapist.name}</h3>
               {therapist.matchScore && (
@@ -182,7 +182,7 @@ const TherapistDirectory = () => {
             </span>
           </div>
           
-          <div className="mt-4">
+          <div>
             <div className="flex flex-wrap gap-2 mb-3">
               {therapist.specialties.map((specialty, index) => (
                 <span
@@ -288,7 +288,7 @@ const TherapistDirectory = () => {
         </div>
 
         {/* Results */}
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredTherapists.map((therapist) => (
             <TherapistCard key={therapist.id} therapist={therapist} />
           ))}

@@ -47,7 +47,7 @@ const Therapists = () => {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Our Therapists</h1>
         
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {therapists.map((therapist) => (
             <div
               key={therapist.id}
