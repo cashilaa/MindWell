@@ -70,14 +70,6 @@ function App() {
                 <Route path="/profile" element={<UserProfile />} />
                 
                 {/* Protected Routes */}
-                {/* <Route
-                  path="/therapists"
-                  element={
-                    <ProtectedRoute>
-                      <TherapistDirectory />
-                    </ProtectedRoute>
-                  }
-                />
                 <Route
                   path="/appointments"
                   element={
@@ -85,7 +77,7 @@ function App() {
                       <Appointments />
                     </ProtectedRoute>
                   }
-                /> */}
+                />
               </Routes>
             </main>
             <Footer />
