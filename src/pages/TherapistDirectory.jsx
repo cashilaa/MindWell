@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import BookingModal from '../components/BookingModal';
 
 // Mock therapist data
 const mockTherapists = [
@@ -9,12 +10,16 @@ const mockTherapists = [
     name: 'Dr. Sarah Johnson',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
     specialties: ['Anxiety', 'Depression', 'Trauma'],
-    languages: ['English', 'Spanish'],
+    languages: ['English', 'Chinese'],
     sessionTypes: ['Online', 'In-person'],
     price: '$120-150',
     priceRange: '100-150',
     rating: 4.9,
     availability: 'Next week',
+    clinic: 'Mind & Body Wellness Centre',
+    location: 'Central Singapore',
+    region: 'Central',
+    address: 'Orchard Road, #08-01 Medical Centre'
   },
   {
     id: 2,
@@ -27,6 +32,10 @@ const mockTherapists = [
     priceRange: '100-150',
     rating: 4.8,
     availability: 'This week',
+    clinic: 'Healing Hearts Clinic',
+    location: 'East Singapore',
+    region: 'East',
+    address: 'Tampines Central, #03-22'
   },
   {
     id: 3,
@@ -39,6 +48,10 @@ const mockTherapists = [
     priceRange: '0-100',
     rating: 4.7,
     availability: 'This week',
+    clinic: 'Mind & Body Wellness Centre',
+    location: 'Central Singapore',
+    region: 'Central',
+    address: 'Orchard Road, #08-02 Medical Centre'
   },
   {
     id: 4,
@@ -51,6 +64,10 @@ const mockTherapists = [
     priceRange: '150+',
     rating: 4.9,
     availability: 'Next week',
+    clinic: 'Serenity Mental Health',
+    location: 'West Singapore',
+    region: 'West',
+    address: 'Jurong East, #05-11 Healthcare Hub'
   },
 ];
 
@@ -60,11 +77,19 @@ const TherapistDirectory = () => {
     sessionType: '',
     language: '',
     priceRange: '',
+    region: '',
+    clinic: ''
   });
   const [therapists, setTherapists] = useState(mockTherapists);
   const [filteredTherapists, setFilteredTherapists] = useState(mockTherapists);
   const [matchedTherapists, setMatchedTherapists] = useState(null);
   const location = useLocation();
+  const [selectedTherapist, setSelectedTherapist] = useState(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  // Extract unique clinics and regions from therapist data
+  const clinics = [...new Set(mockTherapists.map(t => t.clinic))];
+  const regions = [...new Set(mockTherapists.map(t => t.region))];
 
   // Apply filters whenever filters change
   useEffect(() => {
@@ -94,6 +119,20 @@ const TherapistDirectory = () => {
     // Apply price range filter
     if (filters.priceRange) {
       filtered = filtered.filter(therapist => therapist.priceRange === filters.priceRange);
+    }
+
+    // Apply region filter
+    if (filters.region) {
+      filtered = filtered.filter(therapist =>
+        therapist.region === filters.region
+      );
+    }
+
+    // Apply clinic filter
+    if (filters.clinic) {
+      filtered = filtered.filter(therapist =>
+        therapist.clinic === filters.clinic
+      );
     }
 
     setFilteredTherapists(filtered);
@@ -151,6 +190,11 @@ const TherapistDirectory = () => {
 
   const handleFilterChange = (filterType, value) => {
     setFilters(prev => ({ ...prev, [filterType]: value }));
+  };
+
+  const handleBooking = (therapist) => {
+    setSelectedTherapist(therapist);
+    setIsBookingModalOpen(true);
   };
 
   return (
@@ -225,6 +269,38 @@ const TherapistDirectory = () => {
                     <option value="150+">$150+</option>
                   </select>
                 </div>
+
+                <div className="filter-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Region
+                  </label>
+                  <select
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#BE8B69] focus:ring focus:ring-[#BE8B69] focus:ring-opacity-50"
+                    value={filters.region}
+                    onChange={(e) => handleFilterChange('region', e.target.value)}
+                  >
+                    <option value="">All Regions</option>
+                    {regions.map(region => (
+                      <option key={region} value={region}>{region}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Clinic
+                  </label>
+                  <select
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#BE8B69] focus:ring focus:ring-[#BE8B69] focus:ring-opacity-50"
+                    value={filters.clinic}
+                    onChange={(e) => handleFilterChange('clinic', e.target.value)}
+                  >
+                    <option value="">All Clinics</option>
+                    {clinics.map(clinic => (
+                      <option key={clinic} value={clinic}>{clinic}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -277,10 +353,21 @@ const TherapistDirectory = () => {
                           <span className="font-medium">Available:</span> 
                           {therapist.availability}
                         </p>
+                        <p className="flex items-center gap-2">
+                          <span className="font-medium">Clinic:</span> 
+                          {therapist.clinic}
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="font-medium">Location:</span> 
+                          {therapist.location}
+                        </p>
                       </div>
                     </div>
                     <div className="mt-auto">
-                      <button className="w-full bg-[#BE8B69] text-white py-2.5 rounded-md text-base font-medium hover:bg-[#977669] transition-colors">
+                      <button 
+                        onClick={() => handleBooking(therapist)}
+                        className="w-full bg-[#BE8B69] text-white py-2.5 rounded-md text-base font-medium hover:bg-[#977669] transition-colors"
+                      >
                         Book Consultation
                       </button>
                     </div>
@@ -291,6 +378,17 @@ const TherapistDirectory = () => {
           </div>
         </div>
       </div>
+
+      {selectedTherapist && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => {
+            setIsBookingModalOpen(false);
+            setSelectedTherapist(null);
+          }}
+          therapist={selectedTherapist}
+        />
+      )}
     </div>
   );
 };

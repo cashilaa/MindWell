@@ -10,7 +10,11 @@ import TherapistDirectory from './pages/TherapistDirectory';
 import Appointments from './pages/Appointments';
 import Resources from './pages/Resources';
 import ResourceDetail from './pages/ResourceDetail';
+import TherapistProfile from './pages/TherapistProfile';
 import { ThemeProvider } from "@material-tailwind/react";
+import MentalHealthBlog from './pages/MentalHealthBlog';
+import SelfHelpTools from './pages/SelfHelpTools';
+import UserProfile from './pages/UserProfile';
 
 const theme = {
   button: {
@@ -60,6 +64,10 @@ function App() {
                 <Route path="/resources/:topic" element={<ResourceDetail />} />
                 <Route path="/therapists" element={<TherapistDirectory />} />
                 <Route path="/appointments" element={<Appointments />} />
+                <Route path="/therapist/:id" element={<TherapistProfile />} />
+                <Route path="/blog" element={<MentalHealthBlog />} />
+                <Route path="/self-help" element={<SelfHelpTools />} />
+                <Route path="/profile" element={<UserProfile />} />
                 
                 {/* Protected Routes */}
                 {/* <Route

@@ -3,6 +3,54 @@ import { motion } from 'framer-motion';
 import { useQuiz } from './QuizContext';
 import { useNavigate } from 'react-router-dom';
 
+const matchTherapist = (answers, therapist) => {
+  let score = 0;
+  const weights = {
+    format: 3,
+    specialties: 2,
+    availability: 1,
+    culture: 3,
+    lgbtq: 2,
+    price: 3
+  };
+
+  // Check format match
+  if (therapist.formats.includes(answers.format)) {
+    score += weights.format;
+  }
+
+  // Check price range match
+  if (therapist.priceRange === answers.budget) {
+    score += weights.price;
+  }
+
+  // Check cultural background match
+  if (answers.culturalBackground && 
+      therapist.culturalBackgrounds.includes(answers.culturalBackground)) {
+    score += weights.culture;
+  }
+
+  // Check specialty matches
+  if (answers.concerns) {
+    const matchingSpecialties = therapist.specialties.filter(specialty =>
+      answers.concerns.includes(specialty)
+    );
+    score += matchingSpecialties.length * weights.specialties;
+  }
+
+  // Check availability match
+  if (therapist.availability.includes(answers.preferredTime)) {
+    score += weights.availability;
+  }
+
+  // Check LGBTQ+ friendly if specified
+  if (answers.lgbtqSupport && therapist.lgbtqFriendly) {
+    score += weights.lgbtq;
+  }
+
+  return score;
+};
+
 const Recommendations = () => {
   const { quizState, resetQuiz } = useQuiz();
   const navigate = useNavigate();
@@ -17,6 +65,9 @@ const Recommendations = () => {
       specialties: ["anxiety", "depression", "relationships"],
       formats: ["in-person", "video"],
       availability: ["weekday-day", "weekday-evening"],
+      culturalBackgrounds: ["western", "asian"],
+      priceRange: "moderate",
+      lgbtqFriendly: true,
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
       rating: 4.9,
       reviews: 127,
@@ -28,6 +79,9 @@ const Recommendations = () => {
       specialties: ["anxiety", "depression", "self-growth"],
       formats: ["video", "audio"],
       availability: ["weekend", "flexible"],
+      culturalBackgrounds: ["asian"],
+      priceRange: "high",
+      lgbtqFriendly: true,
       image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
       rating: 4.8,
       reviews: 93,
@@ -39,6 +93,9 @@ const Recommendations = () => {
       specialties: ["relationships", "self-growth"],
       formats: ["in-person", "video", "chat"],
       availability: ["weekday-evening", "weekend"],
+      culturalBackgrounds: ["western"],
+      priceRange: "low",
+      lgbtqFriendly: true,
       image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
       rating: 4.9,
       reviews: 156,
@@ -46,15 +103,16 @@ const Recommendations = () => {
   ];
 
   useEffect(() => {
-    // Simple matching algorithm - In production, this would be more sophisticated
-    const matchedTherapists = therapists.filter(therapist => {
-      const formatMatch = therapist.formats.includes(quizState.answers[2]);
-      const specialtyMatch = therapist.specialties.includes(quizState.answers[3]);
-      const availabilityMatch = therapist.availability.includes(quizState.answers[4]);
-      return formatMatch || specialtyMatch || availabilityMatch;
-    });
+    const sortedTherapists = therapists
+      .map(therapist => ({
+        ...therapist,
+        score: matchTherapist(quizState.answers, therapist)
+      }))
+      .sort((a, b) => b.score - a.score)
+      .filter(t => t.score > 0)
+      .slice(0, 5); // Top 5 matches
 
-    setRecommendations(matchedTherapists);
+    setRecommendations(sortedTherapists);
   }, [quizState.answers]);
 
   return (

@@ -42,19 +42,19 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-gray-700">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#977669]">
+                <Link to="/blog" className="text-gray-600 hover:text-[#977669]">
                   Mental Health Blog
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#977669]">
+                <Link to="/self-help" className="text-gray-600 hover:text-[#977669]">
                   Self-Help Tools
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#977669]">
+                <Link to="/resources#crisis" className="text-gray-600 hover:text-[#977669]">
                   Crisis Support
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -63,7 +63,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-gray-700">Contact</h4>
             <ul className="space-y-2">
               <li className="text-gray-600">
-                Email: support@mindwell.com
+                Email: support@tryve.com
               </li>
               <li className="text-gray-600">
                 Phone: (555) 123-4567
